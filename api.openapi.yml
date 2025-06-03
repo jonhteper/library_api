@@ -1,0 +1,403 @@
+openapi: 3.0.3
+info:
+  title: Library API
+  version: 1.0.0
+  description: Api para gestionar libros y usuarios de una biblioteca
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: Public
+    description: Operaciones públicas
+  - name: Protected
+    description: Operaciones protegidas
+
+paths:
+  /:
+    get:
+      operationId: InfoEndpoint
+      summary: Información sobre la API
+      description: Obtiene información sobre la API, incluyendo su versión y descripción.
+      responses:
+        "200":
+          description: Información sobre la API
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InfoResponse"
+
+  /books:
+    get:
+      operationId: GetBooksEndpoint
+      tags:
+        - Public
+      summary: Obtener libros
+      description: Obtiene una lista de todos los libros disponibles en la biblioteca.
+      parameters:
+        - name: page
+          in: query
+          description: Número de página para la paginación
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          description: Cantidad de elementos por página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        "200":
+          description: Lista de libros
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedBooks"
+        "503":
+          description: Servicio no disponible
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      operationId: CreateBookEndpoint
+      tags:
+        - Protected
+      security:
+        - apiKeyAuth: []
+      summary: Crear libro
+      description: Crea un nuevo libro en la biblioteca.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBookDto"
+      responses:
+        "201":
+          description: Libro creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookId"
+        "401":
+          description: No autenticado
+        "409":
+          description: Libro ya existe
+        "422":
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Servicio no disponible
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /books/{id}:
+    get:
+      operationId: GetBookEndpoint
+      security:
+        - apiKeyAuth: []
+      tags:
+        - Protected
+      summary: Obtener libro por ID
+      description: Obtiene un libro específico por su ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Libro encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "404":
+          description: Libro no encontrado
+        "503":
+          description: Servicio no disponible
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      operationId: UpdateBookEndpoint
+      security:
+        - apiKeyAuth: []
+      tags:
+        - Protected
+      summary: Actualizar libro
+      description: Actualiza un libro existente en la biblioteca.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBookDto"
+      responses:
+        "201":
+          description: Libro modificado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Book"
+        "401":
+          description: No autenticado
+        "422":
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Servicio no disponible
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      operationId: DeleteBookEndpoint
+      security:
+        - apiKeyAuth: []
+      tags:
+        - Protected
+      summary: Eliminar libro
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Libro eliminado
+        "401":
+          description: No autenticado
+        "404":
+          description: Libro no encontrado
+        "503":
+          description: Servicio no disponible
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /books/search:
+    get:
+      operationId: SearchBooksEndpoint
+      tags:
+        - Public
+      summary: Buscar libros
+      parameters:
+        - name: title
+          in: query
+          description: Título del libro a buscar
+          required: false
+          schema:
+            type: string
+        - name: author
+          in: query
+          description: Autor del libro a buscar
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Número de página para la paginación
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          description: Cantidad de elementos por página
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        "200":
+          description: Libros encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedBooks"
+        "422":
+          description: Usar criterios de búsqueda válidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Servicio no disponible
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: "apiKey"
+      description: "Tu clave de API"
+      name: "Authorization"
+      in: "header"
+      x-comment: 'Usar el prefijo "ApiKey" en el encabezado Authorization de la forma "ApiKey $token"'
+
+  schemas:
+    CreateBookDto:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Título del libro
+          minLength: 1
+        authors:
+          type: array
+          description: Lista de autores del libro
+          items:
+            type: string
+            minLength: 1
+          minItems: 1
+        year:
+          type: integer
+          description: Año de publicación
+          minimum: 1900
+          maximum: 2100
+        publisher:
+          type: string
+          description: Editorial del libro
+          minLength: 1
+        isbn:
+          type: string
+          description: Número ISBN del libro
+          pattern: ^(?:ISBN[- ]?(?:10|13)?:? )?(?:\d{3}[- ]?)?\d{1,5}[- ]?\d{1,7}[- ]?\d{1,7}[- ]?[0-9X]$
+        stored_quantity:
+          type: integer
+          description: Cantidad de ejemplares disponibles
+          minimum: 1
+          maximum: 1000
+      required:
+        - title
+        - authors
+        - year
+        - publisher
+        - isbn
+        - stored_quantity
+    InfoResponse:
+      type: object
+      properties:
+        version:
+          type: string
+        description:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador único del libro
+        title:
+          type: string
+          description: Título del libro
+          minLength: 1
+        authors:
+          type: array
+          description: Lista de autores del libro
+          items:
+            type: string
+            minLength: 1
+          minItems: 1
+        year:
+          type: integer
+          description: Año de publicación
+          minimum: 1900
+          maximum: 2100
+        publisher:
+          type: string
+          description: Editorial del libro
+          minLength: 1
+        isbn:
+          type: string
+          description: Número ISBN del libro
+          pattern: ^(?:ISBN[- ]?(?:10|13)?:? )?(?:\d{3}[- ]?)?\d{1,5}[- ]?\d{1,7}[- ]?\d{1,7}[- ]?[0-9X]$
+        stored_quantity:
+          type: integer
+          description: Cantidad de ejemplares disponibles
+          minimum: 1
+          maximum: 1000
+      required:
+        - id
+        - title
+        - authors
+        - year
+        - publisher
+        - isbn
+        - stored_quantity
+
+    PaginatedBooks:
+      type: object
+      properties:
+        books:
+          type: array
+          items:
+            $ref: "#/components/schemas/Book"
+        total:
+          type: integer
+        page:
+          type: integer
+        page_size:
+          type: integer
+      required:
+        - books
+        - total
+        - page
+        - page_size
+        
+    BookId:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador único del libro creado
+      required:
+        - id

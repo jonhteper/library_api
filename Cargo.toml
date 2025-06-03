@@ -1,0 +1,70 @@
+[package]
+name = "library_api"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "library_api"
+path = "bin/api.rs"
+
+[[bin]]
+name = "library_cli"
+path = "bin/cli.rs"
+
+
+[dependencies]
+# API RESTful deps
+axum = { version = "0.8" }
+axum-server = "0.7.2"
+
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1" }
+tower-http = { version = "0.5", features = ["trace"] }
+http = "1"
+
+
+# DB deps
+sqlx = { version = "0.8.6", features = [
+    "runtime-tokio",
+    "tls-rustls",
+    "sqlite",
+    "uuid",
+    "macros",
+] }
+
+
+# Error handling deps
+thiserror = { version = "1" }
+
+# Utils deps
+dotenvy = { version = "0.15" }
+proc-singleton = { version = "0.2.0", features = ["arc"] }
+getset = "0.1.5"
+named-ctor = "0.1.1"
+web_proc_macros = { git = "ssh://git@github.com/jonhteper/web_proc_macros.git" }
+parse-display-derive = "0.8.0"
+parse-display = "0.8.0"
+log = "0.4.27"
+env_logger = "0.10.0"
+prefixed-api-key = { version = "0.3.0", features = ["sha2"] }
+email_pass = "0.9.0"
+async-trait = "0.1.88"
+validator = { version = "0.17", features = ["derive"] }
+uuid = { version = "1.17.0", features = ["serde", "v4"] }
+
+# CLI deps
+clap = { version = "4", features = ["derive"], optional = true }
+tracing-core = "0.1.33"
+
+[dev-dependencies]
+reqwest = { version = "0.12", features = ["json"] }
+axum-test = "17.3.0"
+
+
+[profile.release]
+lto = true
+
+[features]
+cli = ["dep:clap"]
+integration-tests = []
