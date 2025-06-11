@@ -6,7 +6,7 @@ use serde_json::json;
 
 use crate::{api_keys::ApiKeyError, books::BookError};
 
-#[derive(Debug, Clone, thiserror::Error, web_proc_macros::ErrorKind)]
+#[derive(Debug, Clone, thiserror::Error, derive_error_kind::ErrorKind)]
 #[error_kind(AppErrorKind)]
 pub enum AppError {
     #[error("Error: {0}")]

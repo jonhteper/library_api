@@ -607,6 +607,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive-error-kind"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d3a422c2552b72ab3fc01435089a5d9f5337e42383543e885275699ef0f539ba"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "derive_builder"
 version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1395,6 +1406,7 @@ dependencies = [
  "axum-server",
  "axum-test",
  "clap",
+ "derive-error-kind",
  "dotenvy",
  "email_pass",
  "env_logger",
@@ -1416,7 +1428,6 @@ dependencies = [
  "tracing-core",
  "uuid",
  "validator",
- "web_proc_macros",
 ]
 
 [[package]]
@@ -3189,16 +3200,6 @@ checksum = "33b6dd2ef9186f1f2072e409e99cd22a975331a6b3591b12c764e0e55c60d5d2"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
-]
-
-[[package]]
-name = "web_proc_macros"
-version = "0.2.0"
-source = "git+ssh://git@github.com/jonhteper/web_proc_macros.git#e5530194dbb3995a1968b3a9eb2bcf25bd64245c"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 1.0.109",
 ]
 
 [[package]]

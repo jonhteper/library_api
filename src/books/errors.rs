@@ -4,7 +4,7 @@ use validator::ValidationErrors;
 
 use crate::AppErrorKind;
 
-#[derive(Debug, Clone, thiserror::Error, web_proc_macros::ErrorKind)]
+#[derive(Debug, Clone, thiserror::Error, derive_error_kind::ErrorKind)]
 #[error_kind(ApiKeyErrorKind)]
 pub enum BookError {
     #[error("Libro no encontrado")]

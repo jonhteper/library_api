@@ -42,7 +42,7 @@ dotenvy = { version = "0.15" }
 proc-singleton = { version = "0.2.0", features = ["arc"] }
 getset = "0.1.5"
 named-ctor = "0.1.1"
-web_proc_macros = { git = "ssh://git@github.com/jonhteper/web_proc_macros.git" }
+derive-error-kind = "0.1.0"
 parse-display-derive = "0.8.0"
 parse-display = "0.8.0"
 log = "0.4.27"
@@ -56,6 +56,7 @@ uuid = { version = "1.17.0", features = ["serde", "v4"] }
 # CLI deps
 clap = { version = "4", features = ["derive"], optional = true }
 tracing-core = "0.1.33"
+
 
 [dev-dependencies]
 reqwest = { version = "0.12", features = ["json"] }

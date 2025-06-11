@@ -1,6 +1,6 @@
 use crate::AppErrorKind;
 
-#[derive(Debug, Clone, thiserror::Error, web_proc_macros::ErrorKind)]
+#[derive(Debug, Clone, thiserror::Error, derive_error_kind::ErrorKind)]
 #[error_kind(ApiKeyErrorKind)]
 pub enum ApiKeyError {
     #[error("Error al encriptar ApiKey: {0}")]
