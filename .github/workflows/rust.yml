@@ -17,4 +17,4 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Run tests
-      run: cargo test --features integration-tests -- --verbose
+      run: cargo test --features integration-tests --verbose
